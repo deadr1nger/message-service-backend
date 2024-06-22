@@ -1,0 +1,42 @@
+spring:
+  application:
+    name: "mail=service-backend"
+  datasource:
+    url: jdbc:h2:mem:h2
+    username: h2
+    password: password
+    driverClassName: org.h2.Driver
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: none
+    show-sql: true
+  liquibase:
+    enabled: true
+    change-log: classpath:/db/changelog/master.xml
+  kafka:
+    enabled: true
+    bootstrap-servers: "127.0.0.1:29092"
+    group:
+      id: "your-group-id"
+    consumer:
+      group-id: "consumergroupid"
+      max-partition: 100000
+      max-bytes: 1000000
+    producer:
+      group-id: "producergroupid"
+    topic:
+      in: "topic-in-here"
+      out: "topic-out-here"
+  mail:
+    host: "your-host"
+    port: 465
+    username: "your-username"
+    password: "your-password"
+
+server:
+  port: 8080
+
+logging:
+  level:
+    root: info
