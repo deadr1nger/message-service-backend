@@ -1,8 +1,8 @@
 package ru.sinara.messageservicebackend.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.boot.web.servlet.RegistrationBean;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.sinara.messageservicebackend.model.dto.RegistrationRequestDto;
@@ -15,8 +15,13 @@ import java.util.UUID;
 @RequestMapping("/registration")
 public class RegistrationController {
     private final RegistrationServiceImpl registrationService;
+
+    /**
+     * @param dto - Тело запроса регистрации
+     * @return - возвращает ID запроса
+     */
     @PostMapping
-    public UUID registration(RegistrationRequestDto dto){
+    public UUID registration(@RequestBody RegistrationRequestDto dto) {
         return registrationService.createRegistration(dto);
     }
 }

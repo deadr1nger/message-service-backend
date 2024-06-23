@@ -1,7 +1,6 @@
 package ru.sinara.messageservicebackend.service.registration;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 import ru.sinara.messageservicebackend.model.dto.RegistrationRequestDto;
 import ru.sinara.messageservicebackend.model.entity.RegistrationEntity;
@@ -17,6 +16,12 @@ public class RegistrationServiceImpl implements RegistrationService {
     private final RegistrationRepository registrationRepository;
     private final KafkaProducerServiceImpl producerService;
     private final RegistrationMapper mapper;
+
+    /**
+     * Метод сохранения запроса на регистрацию, а также отправления на сервис подтверждения
+     * @param dto - тело запроса на регистрацию
+     * @return - возвращает ID-запроса
+     */
     @Override
     public UUID createRegistration(RegistrationRequestDto dto) {
         producerService.send(dto);
@@ -24,4 +29,5 @@ public class RegistrationServiceImpl implements RegistrationService {
         registrationRepository.save(registrationEntity);
         return registrationEntity.getId();
     }
+
 }

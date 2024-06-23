@@ -5,6 +5,7 @@ import org.springframework.stereotype.Repository;
 import ru.sinara.messageservicebackend.model.entity.RegistrationEntity;
 
 import java.util.UUID;
+
 @Repository
 public interface RegistrationRepository extends JpaRepository<RegistrationEntity, UUID> {
 }
