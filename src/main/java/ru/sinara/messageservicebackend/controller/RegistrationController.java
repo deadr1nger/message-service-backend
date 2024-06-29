@@ -21,7 +21,7 @@ public class RegistrationController {
      * @return - возвращает ID запроса
      */
     @PostMapping
-    public UUID registration(@RequestBody RegistrationRequestDto dto) {
-        return registrationService.createRegistration(dto);
+    public void registration(@RequestBody RegistrationRequestDto dto) {
+        registrationService.createRegistration(dto);
     }
 }
