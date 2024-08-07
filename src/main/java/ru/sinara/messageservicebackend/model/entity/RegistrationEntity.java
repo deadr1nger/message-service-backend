@@ -18,13 +18,14 @@ public class RegistrationEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
-
+    @Column(nullable = false)
     private String login;
+    @Column(nullable = false)
     private String password;
     private String email;
-    @Column(name = "first_name")
+    @Column(name = "first_name", nullable = false)
     private String firstName;
-    @Column(name = "last_name")
+    @Column(name = "last_name", nullable = false)
     private String lastName;
     @Column(name = "middle_name")
     private String middleName;

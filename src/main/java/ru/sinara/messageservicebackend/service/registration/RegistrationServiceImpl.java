@@ -6,9 +6,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.sinara.messageservicebackend.model.dto.RegistrationRequestDto;
+import ru.sinara.messageservicebackend.model.dto.RegistrationResponseDto;
 import ru.sinara.messageservicebackend.model.entity.RegistrationEntity;
 import ru.sinara.messageservicebackend.model.mapper.RegistrationMapper;
 import ru.sinara.messageservicebackend.repository.RegistrationRepository;
+import ru.sinara.messageservicebackend.service.kafka.KafkaProducerService;
 import ru.sinara.messageservicebackend.service.kafka.KafkaProducerServiceImpl;
 
 @Service
@@ -16,7 +18,7 @@ import ru.sinara.messageservicebackend.service.kafka.KafkaProducerServiceImpl;
 @RequiredArgsConstructor
 public class RegistrationServiceImpl implements RegistrationService {
     private final RegistrationRepository registrationRepository;
-    private final KafkaProducerServiceImpl producerService;
+    private final KafkaProducerService producerService;
     private final RegistrationMapper mapper;
 
     /**
@@ -25,14 +27,15 @@ public class RegistrationServiceImpl implements RegistrationService {
      */
     @Override
     @Transactional
-    public void createRegistration(RegistrationRequestDto dto) {
+    public RegistrationResponseDto createRegistration(RegistrationRequestDto dto) {
         if(registrationRepository.findByLogin(dto.getLogin()).isPresent() || registrationRepository.findByEmail(dto.getEmail()).isPresent()){
             throw new IllegalArgumentException("User already exist");
         }
         dto.setPassword(MD5Util.computeMD5(dto.getPassword()));
         producerService.send(dto);
-        RegistrationEntity registrationEntity = mapper.RegistrationRequestDtoToRegistrationEntity(dto);
+        RegistrationEntity registrationEntity = mapper.registrationRequestDtoToRegistrationEntity(dto);
         registrationRepository.save(registrationEntity);
+        return mapper.registrationEntityToRegistrationResponseDto(registrationEntity);
 
 
     }

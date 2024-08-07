@@ -4,6 +4,7 @@ import org.mapstruct.InjectionStrategy;
 import org.mapstruct.Mapper;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 import ru.sinara.messageservicebackend.model.dto.RegistrationRequestDto;
+import ru.sinara.messageservicebackend.model.dto.RegistrationResponseDto;
 import ru.sinara.messageservicebackend.model.entity.RegistrationEntity;
 
 
@@ -14,6 +15,8 @@ public interface RegistrationMapper {
      * @param dto - тело запроса регистрации
      * @return возвращает RegistrationEntity
      */
-    RegistrationEntity RegistrationRequestDtoToRegistrationEntity(RegistrationRequestDto dto);
+    RegistrationEntity registrationRequestDtoToRegistrationEntity(RegistrationRequestDto dto);
+
+    RegistrationResponseDto registrationEntityToRegistrationResponseDto (RegistrationEntity entity);
 
 }
