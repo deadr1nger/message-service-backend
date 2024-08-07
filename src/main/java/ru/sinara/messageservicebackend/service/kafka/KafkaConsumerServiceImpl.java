@@ -9,6 +9,7 @@ import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Service;
 import ru.sinara.messageservicebackend.model.dto.RegistrationResponseDto;
+import ru.sinara.messageservicebackend.service.sendmailer.SendMailer;
 import ru.sinara.messageservicebackend.service.sendmailer.SendMailerImpl;
 
 @Service
@@ -16,7 +17,7 @@ import ru.sinara.messageservicebackend.service.sendmailer.SendMailerImpl;
 @RequiredArgsConstructor
 @ConditionalOnProperty(value = "spring.kafka.enabled", havingValue = "true")
 public class KafkaConsumerServiceImpl implements KafkaConsumerService {
-    private final SendMailerImpl sendMailerImpl;
+    private final SendMailer sendMailer;
 
     /**
      * Метод получения запроса-подтверждения из кафки для последующей отправки результата пользователю по почте
@@ -29,7 +30,7 @@ public class KafkaConsumerServiceImpl implements KafkaConsumerService {
         ObjectMapper mapper = new ObjectMapper();
         RegistrationResponseDto convertedDto = mapper.readValue(message, RegistrationResponseDto.class);
         log.info(convertedDto.getId().toString(), convertedDto.getLogin(), convertedDto.getEmail(), convertedDto.getPassword(), convertedDto.getFirstName(), convertedDto.getLastName(), convertedDto.getMiddleName());
-        sendMailerImpl.send(convertedDto);
+        sendMailer.send(convertedDto);
     }
 
 

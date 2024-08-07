@@ -3,6 +3,8 @@ package ru.sinara.messageservicebackend.config;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.producer.ProducerConfig;
+import org.apache.kafka.clients.producer.ProducerRecord;
+import org.apache.kafka.clients.producer.RecordMetadata;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,11 +19,15 @@ import org.springframework.kafka.core.DefaultKafkaProducerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.KafkaAdmin;
+import org.springframework.kafka.support.ProducerListener;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
 import org.springframework.kafka.support.serializer.JsonSerializer;
 import ru.sinara.messageservicebackend.model.dto.RegistrationRequestDto;
 
 
+import java.text.DateFormat;
+import java.time.LocalDate;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -52,6 +58,7 @@ public class KafkaConfig {
         props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
         props.put(JsonSerializer.ADD_TYPE_INFO_HEADERS, false);
         props.put(ALLOW_AUTO_CREATE_TOPICS_CONFIG, false);
+        props.put(ProducerConfig.ACKS_CONFIG, "all");
         return props;
     }
 
@@ -84,7 +91,9 @@ public class KafkaConfig {
 
     @Bean
     public KafkaTemplate<String, RegistrationRequestDto> kafkaTemplate() {
-        return new KafkaTemplate<>(producerFactory());
+        KafkaTemplate<String, RegistrationRequestDto> kafkaTemplate = new KafkaTemplate<>(producerFactory());
+        kafkaTemplate.setProducerListener(producerListener());
+        return kafkaTemplate;
     }
 
 
@@ -100,6 +109,21 @@ public class KafkaConfig {
                 String, RegistrationRequestDto> factory = new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(consumerFactory());
         return factory;
+    }
+
+    @Bean
+    public ProducerListener<String, RegistrationRequestDto> producerListener() {
+        return new ProducerListener<>() {
+            @Override
+            public void onSuccess(ProducerRecord<String, RegistrationRequestDto> producerRecord, RecordMetadata recordMetadata) {
+                log.info(String.format("Message sent successfully with offset: s%", recordMetadata.offset()));
+            }
+
+            @Override
+            public void onError(ProducerRecord<String, RegistrationRequestDto> producerRecord, RecordMetadata recordMetadata, Exception exception) {
+                log.info(String.format("Error sending message: s% ", exception.getMessage()));
+            }
+        };
     }
 
 

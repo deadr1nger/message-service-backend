@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.sinara.messageservicebackend.model.dto.RegistrationRequestDto;
+import ru.sinara.messageservicebackend.model.dto.RegistrationResponseDto;
 import ru.sinara.messageservicebackend.service.registration.RegistrationServiceImpl;
 
 import java.util.UUID;
@@ -21,7 +22,7 @@ public class RegistrationController {
      * @return - возвращает ID запроса
      */
     @PostMapping
-    public void registration(@RequestBody RegistrationRequestDto dto) {
-        registrationService.createRegistration(dto);
+    public RegistrationResponseDto registration(@RequestBody RegistrationRequestDto dto) {
+        return registrationService.createRegistration(dto);
     }
 }
